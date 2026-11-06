@@ -1,0 +1,171 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Sembunyikan scrollbar kasar namun tetap dapat di-scroll */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar,
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Custom subtle dark/light scrollbar for textareas */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.6);
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.9);
+}
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.4) transparent;
+}
+.dark .custom-scrollbar {
+  scrollbar-color: rgba(71, 85, 105, 0.6) transparent;
+}
+
+/* ============================================================================
+   MODUL CETAK NOTA PRESISI: THERMAL KASIR (58mm / 80mm), LABEL & A5/A4 (@media print)
+   ============================================================================ */
+#geektech-print-portal {
+  display: none;
+}
+
+.print-container {
+  max-width: 148.5mm;
+  max-height: 210mm;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #root,
+  .no-print {
+    display: none !important;
+  }
+
+  #geektech-print-portal {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    padding: 0 !important;
+    vertical-align: top !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    overflow: visible !important;
+  }
+
+  .print-container,
+  #geektech-print-portal [data-print-format="a4"] {
+    width: 100% !important;
+    max-width: 148.5mm !important;
+    max-height: 148.5mm !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    padding: 12px 16px !important;
+    vertical-align: top !important;
+    box-sizing: border-box !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  #geektech-print-portal [data-print-format="80mm"] {
+    width: 80mm !important;
+    max-width: 80mm !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  #geektech-print-portal [data-print-format="58mm"] {
+    width: 58mm !important;
+    max-width: 58mm !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    padding: 8px !important;
+    box-sizing: border-box !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  #geektech-print-portal [data-print-format="label"] {
+    width: 76mm !important;
+    max-width: 76mm !important;
+    margin: 0 !important;
+    margin-top: 0 !important;
+    padding: 10px !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+}
+
+
+
+
+
+

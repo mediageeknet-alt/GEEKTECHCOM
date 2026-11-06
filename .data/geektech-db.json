@@ -1,0 +1,367 @@
+{
+  "admins": [
+    {
+      "id": "a1111111-1111-4111-8111-111111111111",
+      "username": "admin",
+      "password_hash": "scrypt$1310be463d486e0dcab700b5e73af00e$d3aa29ebee2537388d4da0f2676d63bb83054a401227c87c8be58769350f4196be1fece4cd10114e76697d8f33c6c84387526a6b91552f5f6f6a6ac59d988aec",
+      "role": "OWNER",
+      "last_login_ip": "127.0.0.1",
+      "created_at": "2026-11-02T05:16:06.166Z",
+      "full_name": "Administrator"
+    }
+  ],
+  "customers": [
+    {
+      "id": "c1111111-1111-4111-8111-111111111111",
+      "full_name": "M. Nizar Pratama",
+      "whatsapp_number": "6281234568821",
+      "whatsapp_last4": "8821",
+      "address": "Jl. Soekarno Hatta No. 48, Lowokwaru, Malang",
+      "created_at": "2026-11-03T05:16:06.166Z"
+    },
+    {
+      "id": "c2222222-2222-4222-8222-222222222222",
+      "full_name": "Alya Rahmawati",
+      "whatsapp_number": "6281398764410",
+      "whatsapp_last4": "4410",
+      "address": "Perum Griya Shanta Blok K-12, Malang",
+      "created_at": "2026-11-03T05:16:06.166Z"
+    },
+    {
+      "id": "c3333333-3333-4333-8333-333333333333",
+      "full_name": "Hendra Wijaya",
+      "whatsapp_number": "6285711229090",
+      "whatsapp_last4": "9090",
+      "address": "Jl. Ijen Besar No. 19, Klojen, Malang",
+      "created_at": "2026-11-02T05:16:06.166Z"
+    },
+    {
+      "id": "c4444444-4444-4444-8444-444444444444",
+      "full_name": "Dimas Aditya",
+      "whatsapp_number": "6282155447712",
+      "whatsapp_last4": "7712",
+      "address": "Jl. Veteran No. 10, Malang",
+      "created_at": "2026-11-04T05:16:06.166Z"
+    },
+    {
+      "id": "c5555555-5555-4555-8555-555555555555",
+      "full_name": "Clarissa Putri",
+      "whatsapp_number": "6281133445599",
+      "whatsapp_last4": "5599",
+      "address": "Jl. Dieng Atas No. 88, Malang",
+      "created_at": "2026-11-04T23:16:06.166Z"
+    }
+  ],
+  "tickets": [
+    {
+      "id": "d1111111-1111-4111-8111-111111111111",
+      "invoice_number": "GTC-20261103-8F2A",
+      "customer_id": "c1111111-1111-4111-8111-111111111111",
+      "device_category": "LAPTOP",
+      "device_brand_model": "MacBook Pro 14\" M2 Pro (A2779)",
+      "serial_number_imei": "C02Y89ZKL490",
+      "passcode_encrypted": "fc120f4a9881233904184232:f7d6996539d7a2c0f6dd8343e0b06d96:e338e6cf497f2deeb32123",
+      "physical_checklist": {
+        "charger": true,
+        "tas": true,
+        "sim_tray_memory": false,
+        "layar_baret": false,
+        "casing_lecet": true,
+        "baut_kurang": 0,
+        "catatan_fisik": "Dent halus di sudut kiri palmrest, charger MagSafe 3 67W dibawa."
+      },
+      "initial_complaint": "Mati total setelah terkena cipratan kopi di area trackpad, indikator MagSafe tidak menyala.",
+      "public_diagnosis": "Ditemukan korosi pada jalur IC CD3217B12 (USB-C Controller) dan kapasitor filter PPBUS_AON short. Perlu penggantian IC CD3217, reballing jalur pad, dan ultrasonic cleaning.",
+      "secret_technician_notes": "Jumper jalur PP3V3_G3H pin 14 ke R7020 (skema board 820-02773-A). IC CD3217B12 ambil dari supplier Sinar Jaya Part Surabaya Rp 285.000 + flux Amtech Rp 35.000.",
+      "status": "WAITING_APPROVAL",
+      "customer_approved": false,
+      "estimated_cost": 1450000,
+      "final_price": 1450000,
+      "parts_cost_modal": 320000,
+      "warranty_days": 60,
+      "warranty_expires_at": null,
+      "created_at": "2026-11-03T05:16:06.166Z",
+      "updated_at": "2026-11-05T03:16:06.166Z",
+      "picked_up_at": null,
+      "pickup_by": null,
+      "pickup_notes": null
+    },
+    {
+      "id": "d2222222-2222-4222-8222-222222222222",
+      "invoice_number": "GTC-20261103-4K9P",
+      "customer_id": "c2222222-2222-4222-8222-222222222222",
+      "device_category": "SMARTPHONE",
+      "device_brand_model": "iPhone 15 Pro Max 256GB Natural Titanium",
+      "serial_number_imei": "358901249812774",
+      "passcode_encrypted": "fe0605894b15c4b95f8001bb:a6568e5d08ebb9d46033ee8d075ffd83:5bcdb4e50f9a",
+      "physical_checklist": {
+        "charger": false,
+        "tas": false,
+        "sim_tray_memory": true,
+        "layar_baret": true,
+        "casing_lecet": false,
+        "baut_kurang": 0,
+        "catatan_fisik": "Unit only, tempered glass retak di pojok kanan atas."
+      },
+      "initial_complaint": "Layar tiba-tiba blank hijau/putih (Green Screen of Death) setelah update iOS, suara notifikasi masih masuk.",
+      "public_diagnosis": "Jalur fleksibel OLED mengalami micro-fracture pada jalur VSN/VSP. Sedang dilakukan proses direct bonding fleksibel layar & kalibrasi TrueTone.",
+      "secret_technician_notes": "Jumper jalur VGH ke testpoint TP-4 (micro-wire 0.01mm UV mask). Modal kawat + lem ACF Rp 95.000, pengerjaan in-house.",
+      "status": "IN_PROGRESS",
+      "customer_approved": true,
+      "estimated_cost": 950000,
+      "final_price": 950000,
+      "parts_cost_modal": 95000,
+      "warranty_days": 30,
+      "warranty_expires_at": null,
+      "created_at": "2026-11-03T05:16:06.166Z",
+      "updated_at": "2026-11-04T23:16:06.166Z",
+      "picked_up_at": null,
+      "pickup_by": null,
+      "pickup_notes": null
+    },
+    {
+      "id": "d3333333-3333-4333-8333-333333333333",
+      "invoice_number": "GTC-20261031-9M1X",
+      "customer_id": "c3333333-3333-4333-8333-333333333333",
+      "device_category": "LAPTOP",
+      "device_brand_model": "ASUS ROG Zephyrus G14 GA402RJ (Ryzen 9)",
+      "serial_number_imei": "N4NRKD008192",
+      "passcode_encrypted": null,
+      "physical_checklist": {
+        "charger": true,
+        "tas": false,
+        "sim_tray_memory": false,
+        "layar_baret": false,
+        "casing_lecet": false,
+        "baut_kurang": 2,
+        "catatan_fisik": "Baut backcover bawah kurang 2 pcs sejak awal masuk."
+      },
+      "initial_complaint": "Suhu CPU tembus 98°C dan sering mati mendadak (thermal shutdown) saat rendering 3D.",
+      "public_diagnosis": "Liquid metal bawaan pabrik mengering dan menggeser dari die CPU. Telah dilakukan pembersihan total heatsink, aplikasi ulang Thermal Grizzly Conductonaut + penggantian thermal pad VRAM.",
+      "secret_technician_notes": "Seal conformal coating di sekeliling SMD kapasitor CPU wajib 2 lapis agar liquid metal aman. Modal Conductonaut + Arctic Pad 1.0mm Rp 165.000.",
+      "status": "PICKED_UP",
+      "customer_approved": true,
+      "estimated_cost": 650000,
+      "final_price": 650000,
+      "parts_cost_modal": 165000,
+      "warranty_days": 30,
+      "warranty_expires_at": "2026-12-04T05:16:06.166Z",
+      "created_at": "2026-11-02T05:16:06.166Z",
+      "updated_at": "2026-11-04T05:16:06.166Z",
+      "picked_up_at": "2026-11-04T05:16:06.166Z",
+      "pickup_by": "Hendra Wijaya",
+      "pickup_notes": "Diambil sendiri (membawa nota asli)"
+    },
+    {
+      "id": "d4444444-4444-4444-8444-444444444444",
+      "invoice_number": "GTC-20261103-7C3E",
+      "customer_id": "c4444444-4444-4444-8444-444444444444",
+      "device_category": "LAPTOP",
+      "device_brand_model": "Lenovo Legion 5 Pro 16ACH6H (RTX 3070)",
+      "serial_number_imei": "PF38LK91",
+      "passcode_encrypted": "ae65aef9a54caaed26dfb67b:e7ced7c6ea85d2ba118471c860afcdf9:cb6959513e158723c1f284",
+      "physical_checklist": {
+        "charger": true,
+        "tas": true,
+        "sim_tray_memory": false,
+        "layar_baret": false,
+        "casing_lecet": false,
+        "baut_kurang": 0,
+        "catatan_fisik": "Charger 300W original disertakan."
+      },
+      "initial_complaint": "Port charger belakang longgar dan harus diganjal agar bisa mengisi daya.",
+      "public_diagnosis": "Konektor DC-In persegi mengalami patah pin tengah akibat panas berlebih. Penggantian konektor DC-In original & penguatan timah jalur ground selesai, lulus uji beban 300W.",
+      "secret_technician_notes": "Part konektor DC-In Legion 300W beli di IndoSparepart Rp 85.000.",
+      "status": "READY_FOR_PICKUP",
+      "customer_approved": true,
+      "estimated_cost": 420000,
+      "final_price": 420000,
+      "parts_cost_modal": 85000,
+      "warranty_days": 45,
+      "warranty_expires_at": null,
+      "created_at": "2026-11-04T05:16:06.166Z",
+      "updated_at": "2026-11-05T03:16:06.166Z",
+      "picked_up_at": null,
+      "pickup_by": null,
+      "pickup_notes": null
+    },
+    {
+      "id": "d5555555-5555-4555-8555-555555555555",
+      "invoice_number": "GTC-20261103-2B5R",
+      "customer_id": "c5555555-5555-4555-8555-555555555555",
+      "device_category": "SMARTPHONE",
+      "device_brand_model": "Samsung Galaxy S23 Ultra 5G 512GB",
+      "serial_number_imei": "354719880231559",
+      "passcode_encrypted": "10028f776ebd6a4acc1880ff:7924f8228f49304fcc2f747be3caae68:d97b671fa5f793d9c7a144",
+      "physical_checklist": {
+        "charger": false,
+        "tas": false,
+        "sim_tray_memory": true,
+        "layar_baret": false,
+        "casing_lecet": true,
+        "baut_kurang": 0,
+        "catatan_fisik": "S-Pen terpasang normal, bezel bawah ada gores tipis."
+      },
+      "initial_complaint": "Kamera utama 1x dan 3x tidak bisa fokus (blur) serta terdengar bunyi getar halus di modul kamera.",
+      "public_diagnosis": "Sedang dilakukan pemeriksaan modul OIS (Optical Image Stabilization) pada sensor utama 200MP dan pengujian jalur tegangan LDO kamera.",
+      "secret_technician_notes": "Cek soket J6002 dan LDO MIPI camera. Jika OIS coil putus, modul kamera copotan ori stok laci B-4 modal Rp 550.000.",
+      "status": "DIAGNOSING",
+      "customer_approved": false,
+      "estimated_cost": 980000,
+      "final_price": 0,
+      "parts_cost_modal": 550000,
+      "warranty_days": 30,
+      "warranty_expires_at": null,
+      "created_at": "2026-11-04T23:16:06.166Z",
+      "updated_at": "2026-11-05T03:16:06.166Z",
+      "picked_up_at": null,
+      "pickup_by": null,
+      "pickup_notes": null
+    }
+  ],
+  "ticket_logs": [
+    {
+      "id": "l101",
+      "ticket_id": "d1111111-1111-4111-8111-111111111111",
+      "status_step": "RECEIVED",
+      "public_description": "Unit MacBook Pro 14\" M2 Pro diterima di Geektech-Com. Pengecekan fisik awal telah dilakukan bersama pelanggan.",
+      "photo_url": null,
+      "created_at": "2026-11-03T05:16:06.166Z"
+    },
+    {
+      "id": "l102",
+      "ticket_id": "d1111111-1111-4111-8111-111111111111",
+      "status_step": "DIAGNOSING",
+      "public_description": "Pembongkaran logic board & pengukuran tegangan rail utama menggunakan mikroskop digital.",
+      "photo_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20500%22%20width%3D%22800%22%20height%3D%22500%22%3E%0A%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230B0F19%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%23111827%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3Cpattern%20id%3D%22grid%22%20width%3D%2232%22%20height%3D%2232%22%20patternUnits%3D%22userSpaceOnUse%22%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M%2032%200%20L%200%200%200%2032%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%220.6%22%20stroke-opacity%3D%220.45%22%2F%3E%0A%20%20%20%20%20%20%3C%2Fpattern%3E%0A%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%3Crect%20width%3D%22800%22%20height%3D%22500%22%20fill%3D%22url(%23bg)%22%2F%3E%0A%20%20%20%20%3Crect%20width%3D%22800%22%20height%3D%22500%22%20fill%3D%22url(%23grid)%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%2236%22%20y%3D%2236%22%20width%3D%22728%22%20height%3D%22428%22%20rx%3D%2214%22%20fill%3D%22%230F172A%22%20fill-opacity%3D%220.82%22%20stroke%3D%22%2300F0FF%22%20stroke-width%3D%221.5%22%20stroke-opacity%3D%220.55%22%2F%3E%0A%20%20%20%20%3C!--%20PCB%20Schematic%20Graphic%20--%3E%0A%20%20%20%20%3Cg%20transform%3D%22translate(70%2C%2095)%22%20stroke%3D%22%2300F0FF%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%22280%22%20height%3D%22210%22%20rx%3D%228%22%20stroke-width%3D%221.8%22%20fill%3D%22%23111827%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2235%22%20y%3D%2235%22%20width%3D%2290%22%20height%3D%2290%22%20rx%3D%224%22%20stroke-width%3D%221.5%22%20fill%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22155%22%20y%3D%2235%22%20width%3D%2290%22%20height%3D%2255%22%20rx%3D%224%22%20stroke-width%3D%221.5%22%20fill%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22200%22%20cy%3D%22145%22%20r%3D%2228%22%20stroke-width%3D%221.5%22%20fill%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%22M%20125%2060%20L%20155%2060%20M%20125%2090%20L%20155%2090%20M%2080%20125%20L%2080%20180%20L%20172%20145%22%20stroke-width%3D%221.4%22%20stroke-dasharray%3D%224%203%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%2280%22%20cy%3D%2280%22%20r%3D%228%22%20fill%3D%22%2300F0FF%22%20fill-opacity%3D%220.35%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22200%22%20cy%3D%22145%22%20r%3D%226%22%20fill%3D%22%2300F0FF%22%2F%3E%0A%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%3C!--%20Inspection%20Telemetry%20--%3E%0A%20%20%20%20%3Ctext%20x%3D%22385%22%20y%3D%22135%22%20fill%3D%22%2394A3B8%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20letter-spacing%3D%221%22%3EGEEKTECH-COM%20LAB%20INSPECTION%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22385%22%20y%3D%22175%22%20fill%3D%22%23F8FAFC%22%20font-family%3D%22sans-serif%22%20font-size%3D%2222%22%20font-weight%3D%22700%22%3ELogic%20Board%20820-02773-A%20Inspection%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22385%22%20y%3D%22210%22%20fill%3D%22%23CBD5E1%22%20font-family%3D%22sans-serif%22%20font-size%3D%2215%22%3EDitemukan%20korosi%20aktif%20pada%20IC%20CD3217B12%20%26%20filter%20PPBUS_AON%3C%2Ftext%3E%0A%20%20%20%20%3Crect%20x%3D%22385%22%20y%3D%22242%22%20width%3D%22340%22%20height%3D%2292%22%20rx%3D%228%22%20fill%3D%22%231E293B%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%22405%22%20y%3D%22272%22%20fill%3D%22%2300F0FF%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%3EVCC_MAIN%20RAIL%20%3A%2019.85V%20STABLE%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22405%22%20y%3D%22296%22%20fill%3D%22%23E2E8F0%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%3ETHERMAL%20DELTA%20%3A%2041.2%C2%B0C%20NOMINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22405%22%20y%3D%22320%22%20fill%3D%22%2394A3B8%22%20font-family%3D%22monospace%22%20font-size%3D%2212%22%3EHASH%3A%20sha256%3A9f84b2c1e09a47d1%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2270%22%20y%3D%22425%22%20fill%3D%22%2364748B%22%20font-family%3D%22monospace%22%20font-size%3D%2212%22%3EVERIFIED%20OPTICAL%20BENCH%20CAPTURE%20%C2%B7%20ZERO-EXIF%20SANITIZED%3C%2Ftext%3E%0A%20%20%3C%2Fsvg%3E",
+      "created_at": "2026-11-04T05:16:06.166Z"
+    },
+    {
+      "id": "l103",
+      "ticket_id": "d1111111-1111-4111-8111-111111111111",
+      "status_step": "WAITING_APPROVAL",
+      "public_description": "Hasil diagnosa selesai. Menunggu persetujuan estimasi biaya perbaikan sebesar Rp 1.450.000 dari pelanggan.",
+      "photo_url": null,
+      "created_at": "2026-11-05T03:16:06.166Z"
+    },
+    {
+      "id": "l201",
+      "ticket_id": "d2222222-2222-4222-8222-222222222222",
+      "status_step": "RECEIVED",
+      "public_description": "Unit iPhone 15 Pro Max diterima di counter servis.",
+      "photo_url": null,
+      "created_at": "2026-11-03T05:16:06.166Z"
+    },
+    {
+      "id": "l202",
+      "ticket_id": "d2222222-2222-4222-8222-222222222222",
+      "status_step": "DIAGNOSING",
+      "public_description": "Pemeriksaan jalur tegangan panel OLED & konektor FPC.",
+      "photo_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20500%22%20width%3D%22800%22%20height%3D%22500%22%3E%0A%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230B0F19%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%23111827%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3Cpattern%20id%3D%22grid%22%20width%3D%2232%22%20height%3D%2232%22%20patternUnits%3D%22userSpaceOnUse%22%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M%2032%200%20L%200%200%200%2032%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%220.6%22%20stroke-opacity%3D%220.45%22%2F%3E%0A%20%20%20%20%20%20%3C%2Fpattern%3E%0A%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%3Crect%20width%3D%22800%22%20height%3D%22500%22%20fill%3D%22url(%23bg)%22%2F%3E%0A%20%20%20%20%3Crect%20width%3D%22800%22%20height%3D%22500%22%20fill%3D%22url(%23grid)%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%2236%22%20y%3D%2236%22%20width%3D%22728%22%20height%3D%22428%22%20rx%3D%2214%22%20fill%3D%22%230F172A%22%20fill-opacity%3D%220.82%22%20stroke%3D%22%233B82F6%22%20stroke-width%3D%221.5%22%20stroke-opacity%3D%220.55%22%2F%3E%0A%20%20%20%20%3C!--%20PCB%20Schematic%20Graphic%20--%3E%0A%20%20%20%20%3Cg%20transform%3D%22translate(70%2C%2095)%22%20stroke%3D%22%233B82F6%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%22280%22%20height%3D%22210%22%20rx%3D%228%22%20stroke-width%3D%221.8%22%20fill%3D%22%23111827%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2235%22%20y%3D%2235%22%20width%3D%2290%22%20height%3D%2290%22%20rx%3D%224%22%20stroke-width%3D%221.5%22%20fill%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22155%22%20y%3D%2235%22%20width%3D%2290%22%20height%3D%2255%22%20rx%3D%224%22%20stroke-width%3D%221.5%22%20fill%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22200%22%20cy%3D%22145%22%20r%3D%2228%22%20stroke-width%3D%221.5%22%20fill%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%22M%20125%2060%20L%20155%2060%20M%20125%2090%20L%20155%2090%20M%2080%20125%20L%2080%20180%20L%20172%20145%22%20stroke-width%3D%221.4%22%20stroke-dasharray%3D%224%203%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%2280%22%20cy%3D%2280%22%20r%3D%228%22%20fill%3D%22%233B82F6%22%20fill-opacity%3D%220.35%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22200%22%20cy%3D%22145%22%20r%3D%226%22%20fill%3D%22%233B82F6%22%2F%3E%0A%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%3C!--%20Inspection%20Telemetry%20--%3E%0A%20%20%20%20%3Ctext%20x%3D%22385%22%20y%3D%22135%22%20fill%3D%22%2394A3B8%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20letter-spacing%3D%221%22%3EGEEKTECH-COM%20LAB%20INSPECTION%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22385%22%20y%3D%22175%22%20fill%3D%22%23F8FAFC%22%20font-family%3D%22sans-serif%22%20font-size%3D%2222%22%20font-weight%3D%22700%22%3EOLED%20Flex%20Bonding%20%26%20VSN%20Rail%20Test%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22385%22%20y%3D%22210%22%20fill%3D%22%23CBD5E1%22%20font-family%3D%22sans-serif%22%20font-size%3D%2215%22%3EKalibrasi%20sinyal%20panel%20Super%20Retina%20XDR%20%26%20pemulihan%20jalur%20VGH%3C%2Ftext%3E%0A%20%20%20%20%3Crect%20x%3D%22385%22%20y%3D%22242%22%20width%3D%22340%22%20height%3D%2292%22%20rx%3D%228%22%20fill%3D%22%231E293B%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%22405%22%20y%3D%22272%22%20fill%3D%22%233B82F6%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%3EVCC_MAIN%20RAIL%20%3A%2019.85V%20STABLE%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22405%22%20y%3D%22296%22%20fill%3D%22%23E2E8F0%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%3ETHERMAL%20DELTA%20%3A%2041.2%C2%B0C%20NOMINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22405%22%20y%3D%22320%22%20fill%3D%22%2394A3B8%22%20font-family%3D%22monospace%22%20font-size%3D%2212%22%3EHASH%3A%20sha256%3A4a21e77c8830b912%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2270%22%20y%3D%22425%22%20fill%3D%22%2364748B%22%20font-family%3D%22monospace%22%20font-size%3D%2212%22%3EVERIFIED%20OPTICAL%20BENCH%20CAPTURE%20%C2%B7%20ZERO-EXIF%20SANITIZED%3C%2Ftext%3E%0A%20%20%3C%2Fsvg%3E",
+      "created_at": "2026-11-04T05:16:06.166Z"
+    },
+    {
+      "id": "l203",
+      "ticket_id": "d2222222-2222-4222-8222-222222222222",
+      "status_step": "WAITING_APPROVAL",
+      "public_description": "Biaya perbaikan Rp 950.000 telah disetujui pelanggan melalui portal tracking.",
+      "photo_url": null,
+      "created_at": "2026-11-04T05:16:06.166Z"
+    },
+    {
+      "id": "l204",
+      "ticket_id": "d2222222-2222-4222-8222-222222222222",
+      "status_step": "IN_PROGRESS",
+      "public_description": "Proses micro-repair jalur fleksibel OLED dan penyegelan ulang lapisan anti-air.",
+      "photo_url": null,
+      "created_at": "2026-11-04T23:16:06.166Z"
+    },
+    {
+      "id": "l301",
+      "ticket_id": "d3333333-3333-4333-8333-333333333333",
+      "status_step": "RECEIVED",
+      "public_description": "Unit ASUS ROG Zephyrus G14 diterima.",
+      "photo_url": null,
+      "created_at": "2026-11-02T05:16:06.166Z"
+    },
+    {
+      "id": "l302",
+      "ticket_id": "d3333333-3333-4333-8333-333333333333",
+      "status_step": "IN_PROGRESS",
+      "public_description": "Pembersihan blok vapor chamber & aplikasi ulang Liquid Metal Conductonaut.",
+      "photo_url": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20500%22%20width%3D%22800%22%20height%3D%22500%22%3E%0A%20%20%20%20%3Cdefs%3E%0A%20%20%20%20%20%20%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%230B0F19%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%2255%25%22%20stop-color%3D%22%23111827%22%2F%3E%0A%20%20%20%20%20%20%20%20%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%20%20%20%20%3Cpattern%20id%3D%22grid%22%20width%3D%2232%22%20height%3D%2232%22%20patternUnits%3D%22userSpaceOnUse%22%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M%2032%200%20L%200%200%200%2032%22%20fill%3D%22none%22%20stroke%3D%22%23334155%22%20stroke-width%3D%220.6%22%20stroke-opacity%3D%220.45%22%2F%3E%0A%20%20%20%20%20%20%3C%2Fpattern%3E%0A%20%20%20%20%3C%2Fdefs%3E%0A%20%20%20%20%3Crect%20width%3D%22800%22%20height%3D%22500%22%20fill%3D%22url(%23bg)%22%2F%3E%0A%20%20%20%20%3Crect%20width%3D%22800%22%20height%3D%22500%22%20fill%3D%22url(%23grid)%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%2236%22%20y%3D%2236%22%20width%3D%22728%22%20height%3D%22428%22%20rx%3D%2214%22%20fill%3D%22%230F172A%22%20fill-opacity%3D%220.82%22%20stroke%3D%22%2310B981%22%20stroke-width%3D%221.5%22%20stroke-opacity%3D%220.55%22%2F%3E%0A%20%20%20%20%3C!--%20PCB%20Schematic%20Graphic%20--%3E%0A%20%20%20%20%3Cg%20transform%3D%22translate(70%2C%2095)%22%20stroke%3D%22%2310B981%22%20fill%3D%22none%22%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%220%22%20y%3D%220%22%20width%3D%22280%22%20height%3D%22210%22%20rx%3D%228%22%20stroke-width%3D%221.8%22%20fill%3D%22%23111827%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%2235%22%20y%3D%2235%22%20width%3D%2290%22%20height%3D%2290%22%20rx%3D%224%22%20stroke-width%3D%221.5%22%20fill%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3Crect%20x%3D%22155%22%20y%3D%2235%22%20width%3D%2290%22%20height%3D%2255%22%20rx%3D%224%22%20stroke-width%3D%221.5%22%20fill%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22200%22%20cy%3D%22145%22%20r%3D%2228%22%20stroke-width%3D%221.5%22%20fill%3D%22%231E293B%22%2F%3E%0A%20%20%20%20%20%20%3Cpath%20d%3D%22M%20125%2060%20L%20155%2060%20M%20125%2090%20L%20155%2090%20M%2080%20125%20L%2080%20180%20L%20172%20145%22%20stroke-width%3D%221.4%22%20stroke-dasharray%3D%224%203%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%2280%22%20cy%3D%2280%22%20r%3D%228%22%20fill%3D%22%2310B981%22%20fill-opacity%3D%220.35%22%2F%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22200%22%20cy%3D%22145%22%20r%3D%226%22%20fill%3D%22%2310B981%22%2F%3E%0A%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%3C!--%20Inspection%20Telemetry%20--%3E%0A%20%20%20%20%3Ctext%20x%3D%22385%22%20y%3D%22135%22%20fill%3D%22%2394A3B8%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%20letter-spacing%3D%221%22%3EGEEKTECH-COM%20LAB%20INSPECTION%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22385%22%20y%3D%22175%22%20fill%3D%22%23F8FAFC%22%20font-family%3D%22sans-serif%22%20font-size%3D%2222%22%20font-weight%3D%22700%22%3EVapor%20Chamber%20%26%20Liquid%20Metal%20Repaste%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22385%22%20y%3D%22210%22%20fill%3D%22%23CBD5E1%22%20font-family%3D%22sans-serif%22%20font-size%3D%2215%22%3ESuhu%20full-load%20Cinebench%20R23%20turun%20dari%2098%C2%B0C%20menjadi%2074%C2%B0C%20stabil%3C%2Ftext%3E%0A%20%20%20%20%3Crect%20x%3D%22385%22%20y%3D%22242%22%20width%3D%22340%22%20height%3D%2292%22%20rx%3D%228%22%20fill%3D%22%231E293B%22%20stroke%3D%22%23334155%22%20stroke-width%3D%221%22%2F%3E%0A%20%20%20%20%3Ctext%20x%3D%22405%22%20y%3D%22272%22%20fill%3D%22%2310B981%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%3EVCC_MAIN%20RAIL%20%3A%2019.85V%20STABLE%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22405%22%20y%3D%22296%22%20fill%3D%22%23E2E8F0%22%20font-family%3D%22monospace%22%20font-size%3D%2213%22%3ETHERMAL%20DELTA%20%3A%2041.2%C2%B0C%20NOMINAL%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%22405%22%20y%3D%22320%22%20fill%3D%22%2394A3B8%22%20font-family%3D%22monospace%22%20font-size%3D%2212%22%3EHASH%3A%20sha256%3A7d9930c4a112f80e%3C%2Ftext%3E%0A%20%20%20%20%3Ctext%20x%3D%2270%22%20y%3D%22425%22%20fill%3D%22%2364748B%22%20font-family%3D%22monospace%22%20font-size%3D%2212%22%3EVERIFIED%20OPTICAL%20BENCH%20CAPTURE%20%C2%B7%20ZERO-EXIF%20SANITIZED%3C%2Ftext%3E%0A%20%20%3C%2Fsvg%3E",
+      "created_at": "2026-11-03T05:16:06.166Z"
+    },
+    {
+      "id": "l303",
+      "ticket_id": "d3333333-3333-4333-8333-333333333333",
+      "status_step": "PICKED_UP",
+      "public_description": "Unit telah diambil oleh pelanggan dan masa garansi resmi 30 hari telah aktif.",
+      "photo_url": null,
+      "created_at": "2026-11-04T05:16:06.166Z"
+    },
+    {
+      "id": "l401",
+      "ticket_id": "d4444444-4444-4444-8444-444444444444",
+      "status_step": "RECEIVED",
+      "public_description": "Unit Lenovo Legion 5 Pro diterima beserta adaptor 300W.",
+      "photo_url": null,
+      "created_at": "2026-11-04T05:16:06.166Z"
+    },
+    {
+      "id": "l402",
+      "ticket_id": "d4444444-4444-4444-8444-444444444444",
+      "status_step": "READY_FOR_PICKUP",
+      "public_description": "Penggantian konektor DC-In selesai & lulus stress test daya 300W selama 2 jam.",
+      "photo_url": null,
+      "created_at": "2026-11-05T03:16:06.166Z"
+    },
+    {
+      "id": "l501",
+      "ticket_id": "d5555555-5555-4555-8555-555555555555",
+      "status_step": "RECEIVED",
+      "public_description": "Unit Samsung Galaxy S23 Ultra diterima untuk pengecekan modul kamera.",
+      "photo_url": null,
+      "created_at": "2026-11-04T23:16:06.166Z"
+    },
+    {
+      "id": "l502",
+      "ticket_id": "d5555555-5555-4555-8555-555555555555",
+      "status_step": "DIAGNOSING",
+      "public_description": "Pengujian aktuator OIS kamera utama 200MP dan telefoto 3x.",
+      "photo_url": null,
+      "created_at": "2026-11-05T03:16:06.166Z"
+    }
+  ],
+  "wa_logs": [
+    {
+      "id": "w101",
+      "ticket_id": "d1111111-1111-4111-8111-111111111111",
+      "method": "DIRECT_WA_FALLBACK",
+      "status": "FALLBACK_TRIGGERED",
+      "response_log": "Wablas Gateway nonaktif. URL Direct WhatsApp (wa.me/6281234568821) berhasil di-generate untuk event WAITING_APPROVAL.",
+      "sent_at": "2026-11-05T03:16:06.166Z"
+    },
+    {
+      "id": "w401",
+      "ticket_id": "d4444444-4444-4444-8444-444444444444",
+      "method": "DIRECT_WA_FALLBACK",
+      "status": "FALLBACK_TRIGGERED",
+      "response_log": "Wablas Gateway nonaktif. URL Direct WhatsApp (wa.me/6282155447712) berhasil di-generate untuk event READY_FOR_PICKUP.",
+      "sent_at": "2026-11-05T03:16:06.166Z"
+    }
+  ],
+  "system_settings": {
+    "id": 1,
+    "wablas_domain": "https://solo.wablas.com",
+    "wablas_api_key": "",
+    "wablas_secret_key": "",
+    "is_wablas_enabled": false,
+    "updated_at": "2026-11-05T05:16:06.166Z",
+    "store_name": "Geektech-Com",
+    "store_slogan": "Spesialis Perbaikan Laptop & Smartphone",
+    "store_address": "Jl. Soekarno Hatta No. 102, Malang",
+    "store_phone": "0811-3600-8899",
+    "receipt_footer_notes": "1. Garansi hanya berlaku untuk kerusakan dan komponen yang sama sesuai nota ini.\n2. Garansi gugur apabila segel rusak, terkena cairan, atau terjatuh.\n3. Barang yang tidak diambil lebih dari 30 hari di luar tanggung jawab kami."
+  }
+}

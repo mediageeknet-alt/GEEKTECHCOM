@@ -1,0 +1,147 @@
+// ============================================================================
+// GEEKTECH-COM — PRISMA SCHEMA (PostgreSQL Relational Schema)
+// Pemisahan Tegas Antara Data Publik & Data Rahasia Internal Toko
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AdminRole {
+  OWNER
+  TECHNICIAN
+  CASHIER
+}
+
+enum DeviceCategory {
+  LAPTOP
+  SMARTPHONE
+  OTHER
+}
+
+enum TicketStatus {
+  RECEIVED
+  DIAGNOSING
+  WAITING_APPROVAL
+  IN_PROGRESS
+  QC_TESTING
+  READY_FOR_PICKUP
+  PICKED_UP
+  CANCELLED
+}
+
+enum WaMethod {
+  WABLAS_API
+  DIRECT_WA_FALLBACK
+}
+
+enum WaDeliveryStatus {
+  SENT
+  FAILED
+  FALLBACK_TRIGGERED
+}
+
+// 1. Admin — Pengelola Internal & Teknisi
+model Admin {
+  id            String    @id @default(uuid()) @db.Uuid
+  username      String    @unique @db.VarChar(64)
+  password_hash String    @db.Text // Argon2id / Bcrypt hash
+  role          AdminRole @default(TECHNICIAN)
+  last_login_ip String?   @db.VarChar(64)
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@map("admins")
+}
+
+// 2. Customer — STRICTLY PRIVATE (Jangan pernah tampilkan mentah di API publik)
+model Customer {
+  id              String          @id @default(uuid()) @db.Uuid
+  full_name       String          @db.VarChar(120)
+  whatsapp_number String          @db.VarChar(24) // Format 628xxx
+  whatsapp_last4  String          @db.Char(4)     // 4 digit terakhir untuk verifikasi tracking publik
+  address         String?         @db.Text
+  created_at      DateTime        @default(now()) @db.Timestamptz(6)
+  tickets         ServiceTicket[]
+
+  @@index([whatsapp_number], name: "idx_customer_whatsapp_number")
+  @@index([whatsapp_last4], name: "idx_customer_whatsapp_last4")
+  @@map("customers")
+}
+
+// 3. ServiceTicket — Nota Servis & Pemisahan Data Publik vs Rahasia Admin
+model ServiceTicket {
+  id                      String         @id @default(uuid()) @db.Uuid
+  invoice_number          String         @unique @db.VarChar(32) // Format: GTC-YYYYMMDD-XXXX
+  customer_id             String         @db.Uuid
+  customer                Customer       @relation(fields: [customer_id], references: [id], onDelete: Restrict)
+  device_category         DeviceCategory @default(LAPTOP)
+  device_brand_model      String         @db.VarChar(150)
+  serial_number_imei      String?        @db.VarChar(100)
+  passcode_encrypted      String?        @db.Text // Dienkripsi AES-256-GCM, otomatis NULL saat status PICKED_UP
+  physical_checklist      Json           @db.JsonB // Contoh: {"charger": true, "tas": false, "baut_kurang": 2, "layar_baret": true}
+  initial_complaint       String         @db.Text
+  public_diagnosis        String?        @db.Text // Penjelasan sopan & jelas untuk pelanggan
+  secret_technician_notes String?        @db.Text // RAHASIA ADMIN: jalur jumper, skema motherboard, toko sparepart
+  status                  TicketStatus   @default(RECEIVED)
+  customer_approved       Boolean        @default(false)
+  estimated_cost          Decimal        @default(0) @db.Decimal(12, 2)
+  final_price             Decimal        @default(0) @db.Decimal(12, 2)
+  parts_cost_modal        Decimal        @default(0) @db.Decimal(12, 2) // RAHASIA ADMIN: harga modal komponen untuk kalkulasi profit
+  warranty_days           Int            @default(30)
+  warranty_expires_at     DateTime?      @db.Timestamptz(6) // Dihitung otomatis saat status berubah menjadi PICKED_UP
+  created_at              DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime       @updatedAt @db.Timestamptz(6)
+
+  logs                    TicketLog[]
+  wa_notifications        WaNotificationLog[]
+
+  @@index([invoice_number], name: "idx_ticket_invoice_number")
+  @@index([status], name: "idx_ticket_status")
+  @@index([customer_id], name: "idx_ticket_customer_id")
+  @@map("service_tickets")
+}
+
+// 4. TicketLog — Riwayat Tahapan Pengerjaan & Bukti Foto Pemeriksaan
+model TicketLog {
+  id                 String        @id @default(uuid()) @db.Uuid
+  ticket_id          String        @db.Uuid
+  ticket             ServiceTicket @relation(fields: [ticket_id], references: [id], onDelete: Cascade)
+  status_step        TicketStatus
+  public_description String        @db.Text
+  photo_url          String?       @db.Text // Nama file di-hash acak (SHA-256)
+  created_at         DateTime      @default(now()) @db.Timestamptz(6)
+
+  @@index([ticket_id, created_at], name: "idx_ticket_log_timeline")
+  @@map("ticket_logs")
+}
+
+// 5. WaNotificationLog — Audit Log Pengiriman WhatsApp (Wablas vs Fallback Direct WA)
+model WaNotificationLog {
+  id           String           @id @default(uuid()) @db.Uuid
+  ticket_id    String           @db.Uuid
+  ticket       ServiceTicket    @relation(fields: [ticket_id], references: [id], onDelete: Cascade)
+  method       WaMethod
+  status       WaDeliveryStatus
+  response_log String           @db.Text
+  sent_at      DateTime         @default(now()) @db.Timestamptz(6)
+
+  @@index([ticket_id, sent_at], name: "idx_wa_log_ticket")
+  @@map("wa_notification_logs")
+}
+
+// 6. SystemSetting — Konfigurasi Wablas Gateway & Pengaturan Toko
+model SystemSetting {
+  id                Int      @id @default(1)
+  wablas_domain     String   @default("https://solo.wablas.com") @db.VarChar(255)
+  wablas_api_key    String   @default("") @db.Text
+  wablas_secret_key String   @default("") @db.Text
+  is_wablas_enabled Boolean  @default(false)
+  updated_at        DateTime @updatedAt @db.Timestamptz(6)
+
+  @@map("system_settings")
+}
