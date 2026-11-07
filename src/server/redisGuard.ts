@@ -226,11 +226,46 @@ class RedisGuardEngine {
 export const redisGuard = new RedisGuardEngine();
 
 export function getClientIp(req: Request): string {
-  const forwarded = req.headers['x-forwarded-for'];
-  if (typeof forwarded === 'string' && forwarded.length > 0) {
-    return forwarded.split(',')[0].trim();
+  const normalizeIp = (rawIp: string): string => {
+    const cleaned = rawIp.trim();
+    return cleaned.startsWith('::ffff:') ? cleaned.slice(7) : cleaned;
+  };
+
+  // 1. Prioritaskan Cloudflare header jika domain diproteksi Cloudflare
+  const cfConnectingIp = req.headers['cf-connecting-ip'];
+  if (typeof cfConnectingIp === 'string' && cfConnectingIp.trim().length > 0) {
+    return normalizeIp(cfConnectingIp.split(',')[0]);
   }
-  return req.ip || req.socket.remoteAddress || '127.0.0.1';
+
+  // 2. Baca X-Forwarded-For dari Nginx / Reverse Proxy (ambil IP pertama = IP asli klien)
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded.trim().length > 0) {
+    const firstIp = forwarded.split(',')[0].trim();
+    if (firstIp && firstIp !== '127.0.0.1' && firstIp !== '::1') {
+      return normalizeIp(firstIp);
+    }
+  } else if (Array.isArray(forwarded) && forwarded.length > 0 && forwarded[0]) {
+    const firstIp = forwarded[0].split(',')[0].trim();
+    if (firstIp && firstIp !== '127.0.0.1' && firstIp !== '::1') {
+      return normalizeIp(firstIp);
+    }
+  }
+
+  // 3. Baca X-Real-IP dari Nginx (proxy_set_header X-Real-IP $remote_addr;)
+  const realIp = req.headers['x-real-ip'];
+  if (typeof realIp === 'string' && realIp.trim().length > 0) {
+    const cleanedRealIp = realIp.trim();
+    if (cleanedRealIp !== '127.0.0.1' && cleanedRealIp !== '::1') {
+      return normalizeIp(cleanedRealIp);
+    }
+  }
+
+  // 4. Gunakan req.ip dari Express (otomatis terisi setelah app.set('trust proxy', 1))
+  if (req.ip) {
+    return normalizeIp(req.ip);
+  }
+
+  return normalizeIp(req.socket?.remoteAddress || '127.0.0.1');
 }
 
 /**
@@ -255,10 +290,11 @@ export async function publicRateLimiterMiddleware(
       error: 'TERLALU_BANYAK_PERCOBAAN',
       message: `Aktivitas mencurigakan terdeteksi. IP Anda (${ip}) diblokir sementara selama ${Math.ceil(
         status.retryAfterSeconds / 60
-      )} menit (${status.retryAfterSeconds} detik) karena melewati batas 5 permintaan/menit.`,
+      )} menit (${status.retryAfterSeconds} detik) karena melewati batas ${status.limit} permintaan/menit.`,
       retry_after_seconds: status.retryAfterSeconds,
     });
   }
 
   return next();
 }
+

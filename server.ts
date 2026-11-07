@@ -269,6 +269,9 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  // Percayai reverse proxy (Nginx / Cloudflare) agar req.ip dan Rate Limiter membaca IP asli pengunjung
+  app.set('trust proxy', 1);
+
   app.disable('x-powered-by');
   app.use(securityHeadersMiddleware);
   app.use(express.json({ limit: '5mb' }));
