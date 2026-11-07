@@ -206,6 +206,57 @@ function getAppBaseUrl(req: Request): string {
 }
 
 // ============================================================================
+// HELPER WEBHOOK GOOGLE APPS SCRIPT (GAS) — PENCATATAN KEUANGAN OTOMATIS
+// ============================================================================
+
+const GAS_FINANCE_WEBHOOK_URL =
+  process.env.GAS_WEBHOOK_URL ||
+  'https://script.google.com/macros/s/AKfycbxrbj502KGmSsau7BZNZO8QOWOxCAi2euC3NSy_gZU-0norlT_22fgLYrQKEmNlDDV90Q/exec';
+const GAS_OWNER_PHONE = process.env.GAS_OWNER_PHONE || '6285800223696';
+
+async function sendGasFinanceWebhook(ticket: ServiceTicketRecord): Promise<void> {
+  try {
+    const webhookUrl = (process.env.GAS_WEBHOOK_URL || GAS_FINANCE_WEBHOOK_URL).trim();
+    if (!webhookUrl) return;
+
+    const tarifServis =
+      ticket.final_price > 0 ? Number(ticket.final_price) : Number(ticket.estimated_cost || 0);
+    const modalPart = Number(ticket.parts_cost_modal || 0);
+
+    const payload = {
+      phone: GAS_OWNER_PHONE,
+      message: `Catat pemasukan servis nota ${ticket.invoice_number} unit ${ticket.device_brand_model} sebesar Rp${tarifServis} dengan modal sparepart Rp${modalPart}.`,
+    };
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+      redirect: 'follow',
+      signal: AbortSignal.timeout(10000),
+    });
+
+    if (!response.ok) {
+      console.warn(
+        `[GAS Webhook] Gagal mengirim data keuangan nota ${ticket.invoice_number} (HTTP ${response.status}).`
+      );
+    } else {
+      console.log(
+        `[GAS Webhook] Berhasil mencatat pemasukan servis nota ${ticket.invoice_number} ke Google Apps Script.`
+      );
+    }
+  } catch (err) {
+    // Jangan biarkan kegagalan/timeout ke GAS menghentikan proses utama aplikasi
+    console.error(
+      `[GAS Webhook] Error / Timeout saat mengirim webhook nota ${ticket.invoice_number}:`,
+      err instanceof Error ? err.message : err
+    );
+  }
+}
+
+// ============================================================================
 // MIDDLEWARE AUTENTIKASI ADMIN (HTTPONLY COOKIE + REDIS SESSION CHECK + CSRF)
 // ============================================================================
 
@@ -968,6 +1019,11 @@ async function startServer() {
       dbStore.save();
       await redisGuard.invalidateTicketCache(newTicket.invoice_number, customer.whatsapp_last4);
 
+      // Jika saat input awal status langsung diset "Selesai & Diambil" (PICKED_UP), kirim webhook keuangan ke GAS
+      if (newTicket.status === 'PICKED_UP') {
+        void sendGasFinanceWebhook(newTicket);
+      }
+
       return res.status(201).json({
         message: 'Servisan Berhasil Disimpan',
         ticket: toAdminTicketView(newTicket, customer, state.ticket_logs, state.wa_logs),
@@ -977,10 +1033,7 @@ async function startServer() {
   );
 
   // Update Tahapan Servis, Rahasia Teknisi, Modal Sparepart, Bukti Foto & Auto-Purge PIN
-  app.patch(
-    '/api/v1/admin/tickets/:id',
-    requireAdminAuth,
-    async (req: AuthenticatedRequest, res: Response) => {
+  const handleUpdateTicketRoute = async (req: AuthenticatedRequest, res: Response) => {
       const ticketId = req.params.id;
       const parsed = UpdateTicketSchema.safeParse(req.body);
       if (!parsed.success) {
@@ -1198,6 +1251,13 @@ async function startServer() {
       // Cache Invalidation: Hapus cache Redis untuk tiket ini
       await redisGuard.invalidateTicketCache(ticket.invoice_number, customer.whatsapp_last4);
 
+      // WEBHOOK KEUANGAN GOOGLE APPS SCRIPT (GAS):
+      // Jika status servis baru saja diubah menjadi "Selesai & Diambil" (PICKED_UP / Lunas),
+      // jalankan pengiriman webhook secara asinkron (terbungkus try...catch di dalam sendGasFinanceWebhook)
+      if (previousStatus !== 'PICKED_UP' && ticket.status === 'PICKED_UP') {
+        void sendGasFinanceWebhook(ticket);
+      }
+
       return res.json({
         message: autoPurgedPasscode
           ? `Status tiket diperbarui ke Selesai & Diambil. PIN pelanggan telah dihapus otomatis dan garansi ${ticket.warranty_days} hari aktif.`
@@ -1208,7 +1268,17 @@ async function startServer() {
         ticket: toAdminTicketView(ticket, customer, state.ticket_logs, state.wa_logs),
         whatsapp_dispatch: waDispatchResult,
       });
-    }
+  };
+
+  app.patch(
+    ['/api/v1/admin/tickets/:id', '/api/services/:id'],
+    requireAdminAuth,
+    handleUpdateTicketRoute
+  );
+  app.put(
+    ['/api/v1/admin/tickets/:id', '/api/services/:id'],
+    requireAdminAuth,
+    handleUpdateTicketRoute
   );
 
   // Hapus Tiket Servis Secara Permanen (`DELETE /api/v1/admin/tickets/:id` & `/api/services/:id` - OWNER/ADMIN ONLY)
