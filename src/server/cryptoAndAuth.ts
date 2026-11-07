@@ -157,36 +157,43 @@ export function verifyCsrfToken(sessionId: string, tokenFromHeader: string | und
 }
 
 export function setAuthCookies(res: Response, accessToken: string, refreshToken: string, csrfToken: string) {
-  // Dalam iFrame AI Studio (cross-origin), wajib SameSite=None dan Secure=true agar browser tidak memblokir cookie sesi
+  const forwardedProto = String(res.req?.headers?.['x-forwarded-proto'] || '');
+  const isHttps = forwardedProto.includes('https') || res.req?.secure === true;
+  const sameSiteMode: 'none' | 'lax' = isHttps ? 'none' : 'lax';
+
   res.cookie('gtc_access_token', accessToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: 'none',
+    secure: isHttps,
+    sameSite: sameSiteMode,
     maxAge: 15 * 60 * 1000, // 15 menit
     path: '/',
   });
 
   res.cookie('gtc_refresh_token', refreshToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: 'none',
+    secure: isHttps,
+    sameSite: sameSiteMode,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 hari
     path: '/api/v1/admin/auth',
   });
 
   res.cookie('gtc_csrf_token', csrfToken, {
     httpOnly: false,
-    secure: true,
-    sameSite: 'none',
+    secure: isHttps,
+    sameSite: sameSiteMode,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     path: '/',
   });
 }
 
 export function clearAuthCookies(res: Response) {
-  res.clearCookie('gtc_access_token', { path: '/', secure: true, sameSite: 'none' });
-  res.clearCookie('gtc_refresh_token', { path: '/api/v1/admin/auth', secure: true, sameSite: 'none' });
-  res.clearCookie('gtc_csrf_token', { path: '/', secure: true, sameSite: 'none' });
+  const forwardedProto = String(res.req?.headers?.['x-forwarded-proto'] || '');
+  const isHttps = forwardedProto.includes('https') || res.req?.secure === true;
+  const sameSiteMode: 'none' | 'lax' = isHttps ? 'none' : 'lax';
+
+  res.clearCookie('gtc_access_token', { path: '/', secure: isHttps, sameSite: sameSiteMode });
+  res.clearCookie('gtc_refresh_token', { path: '/api/v1/admin/auth', secure: isHttps, sameSite: sameSiteMode });
+  res.clearCookie('gtc_csrf_token', { path: '/', secure: isHttps, sameSite: sameSiteMode });
 }
 
 /**
