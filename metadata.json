@@ -1,6 +1,6 @@
 {
   "name": "Geektech-Com Service & Tracking System",
-  "description": "Sistem manajemen servis laptop & smartphone dengan pelacakan progres real-time terproteksi DTO, enkripsi PIN AES-256, pencetakan nota thermal QR, kalkulasi laba bersih, dan notifikasi WhatsApp otomatis.",
+  "description": "Cek status perbaikan laptop dan smartphone Anda secara real-time di Geektech-Com. Cepat, transparan, dan terpercaya.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
