@@ -376,9 +376,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   useEffect(() => {
     if (adminUser) {
       fetchDashboardData();
-      fetchTeamMembers();
+      if (adminUser.role === 'OWNER') {
+        fetchTeamMembers();
+      }
+      if (adminUser.role === 'TECHNICIAN' && activeSubTab !== 'tickets') {
+        setActiveSubTab('tickets');
+      } else if (adminUser.role === 'CASHIER' && activeSubTab === 'settings') {
+        setActiveSubTab('tickets');
+      }
     }
-  }, [adminUser, fetchDashboardData, fetchTeamMembers]);
+  }, [adminUser, activeSubTab, fetchDashboardData, fetchTeamMembers]);
 
   const filteredTickets = tickets.filter((t) => {
     const matchesStatus = statusFilter === 'ALL' || t.status === statusFilter;
@@ -1487,45 +1494,54 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             >
               Antrean Servis ({tickets.length})
             </button>
-            <button
-              type="button"
-              onClick={() => setActiveSubTab('new_ticket')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm md:text-base font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                activeSubTab === 'new_ticket'
-                  ? 'bg-white dark:bg-[#111827] text-[#0284C7] dark:text-[#00F0FF] shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Plus className="w-4 h-4 shrink-0" />
-              <span>Input Servisan</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveSubTab('finance')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm md:text-base font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                activeSubTab === 'finance'
-                  ? 'bg-white dark:bg-[#111827] text-emerald-600 dark:text-emerald-400 shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Wallet className="w-4 h-4 shrink-0" />
-              <span>Kas & Keuangan</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setActiveSubTab('settings');
-                fetchTeamMembers();
-              }}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm md:text-base font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                activeSubTab === 'settings'
-                  ? 'bg-white dark:bg-[#111827] text-[#0284C7] dark:text-[#00F0FF] shadow-xs'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-              }`}
-            >
-              <Settings className="w-4 h-4 shrink-0" />
-              <span>Pengaturan</span>
-            </button>
+
+            {(adminUser.role === 'OWNER' || adminUser.role === 'CASHIER') && (
+              <button
+                type="button"
+                onClick={() => setActiveSubTab('new_ticket')}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm md:text-base font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                  activeSubTab === 'new_ticket'
+                    ? 'bg-white dark:bg-[#111827] text-[#0284C7] dark:text-[#00F0FF] shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Plus className="w-4 h-4 shrink-0" />
+                <span>Input Servisan</span>
+              </button>
+            )}
+
+            {(adminUser.role === 'OWNER' || adminUser.role === 'CASHIER') && (
+              <button
+                type="button"
+                onClick={() => setActiveSubTab('finance')}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm md:text-base font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                  activeSubTab === 'finance'
+                    ? 'bg-white dark:bg-[#111827] text-emerald-600 dark:text-emerald-400 shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Wallet className="w-4 h-4 shrink-0" />
+                <span>Kas & Keuangan</span>
+              </button>
+            )}
+
+            {adminUser.role === 'OWNER' && (
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveSubTab('settings');
+                  fetchTeamMembers();
+                }}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm md:text-base font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                  activeSubTab === 'settings'
+                    ? 'bg-white dark:bg-[#111827] text-[#0284C7] dark:text-[#00F0FF] shadow-xs'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                <Settings className="w-4 h-4 shrink-0" />
+                <span>Pengaturan</span>
+              </button>
+            )}
           </div>
 
           <button
@@ -1869,14 +1885,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                 WA
                               </button>
                             )}
-                            <button
-                              type="button"
-                              onClick={() => setTicketToDelete(t)}
-                              className="p-1.5 rounded bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
-                              title="Hapus Nota Permanen"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
+                            {adminUser.role === 'OWNER' && (
+                              <button
+                                type="button"
+                                onClick={() => setTicketToDelete(t)}
+                                className="p-1.5 rounded bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-colors cursor-pointer"
+                                title="Hapus Nota Permanen"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
                             <button
                               type="button"
                               onClick={() => handleSelectTicket(t)}
@@ -2037,14 +2055,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                                     <Send className="w-3.5 h-3.5" />
                                   </button>
                                 )}
-                                <button
-                                  type="button"
-                                  onClick={() => setTicketToDelete(t)}
-                                  className="p-1.5 rounded-md bg-red-500/10 dark:bg-red-500/15 text-red-600 dark:text-red-400 hover:bg-red-500/20 dark:hover:bg-red-500/25 transition-colors cursor-pointer"
-                                  title="Hapus Nota Permanen"
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </button>
+                                {adminUser.role === 'OWNER' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setTicketToDelete(t)}
+                                    className="p-1.5 rounded-md bg-red-500/10 dark:bg-red-500/15 text-red-600 dark:text-red-400 hover:bg-red-500/20 dark:hover:bg-red-500/25 transition-colors cursor-pointer"
+                                    title="Hapus Nota Permanen"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
                               </div>
                             </td>
                           </tr>
@@ -2311,14 +2331,29 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
                   <div>
                     <label className="block text-xs font-medium text-amber-950 dark:text-amber-200 mb-1">
-                      Catatan Teknisi
+                      Catatan Teknisi{' '}
+                      {adminUser.role === 'CASHIER' && (
+                        <span className="text-[10px] font-normal text-amber-700 dark:text-amber-400">
+                          (Read-Only untuk Kasir)
+                        </span>
+                      )}
                     </label>
                     <textarea
                       rows={2}
                       value={editSecretNotes}
-                      onChange={(e) => setEditSecretNotes(e.target.value)}
-                      className="w-full px-3 py-1.5 text-xs font-mono rounded-lg bg-white dark:bg-[#0B0F19] border border-amber-300 dark:border-amber-800/80 text-slate-900 dark:text-slate-100 custom-scrollbar focus:outline-none focus:ring-1 focus:ring-amber-500"
-                      placeholder="Jalur jumper, skema board, supplier part..."
+                      disabled={adminUser.role === 'CASHIER'}
+                      readOnly={adminUser.role === 'CASHIER'}
+                      onChange={(e) => {
+                        if (adminUser.role !== 'CASHIER') {
+                          setEditSecretNotes(e.target.value);
+                        }
+                      }}
+                      className="w-full px-3 py-1.5 text-xs font-mono rounded-lg bg-white dark:bg-[#0B0F19] border border-amber-300 dark:border-amber-800/80 text-slate-900 dark:text-slate-100 custom-scrollbar focus:outline-none focus:ring-1 focus:ring-amber-500 disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-slate-100 dark:disabled:bg-slate-900"
+                      placeholder={
+                        adminUser.role === 'CASHIER'
+                          ? 'Hanya dapat diisi oleh Teknisi / Owner...'
+                          : 'Jalur jumper, skema board, supplier part...'
+                      }
                     />
                   </div>
 
@@ -2446,7 +2481,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* ====================================================================
           SUB-TAB 2: FORM INPUT SERVISAN BARU
          ==================================================================== */}
-      {activeSubTab === 'new_ticket' && (
+      {activeSubTab === 'new_ticket' &&
+        (adminUser.role === 'OWNER' || adminUser.role === 'CASHIER') && (
         <form
           onSubmit={handleCreateTicket}
           className="rounded-xl bg-white dark:bg-[#111827]/80 border border-slate-200 dark:border-[#1F2937] p-6 sm:p-8 space-y-6"
@@ -2977,14 +3013,27 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
               <div>
                 <label className="block text-xs font-medium text-amber-700 dark:text-amber-400 mb-1">
-                  Catatan Internal Teknisi
+                  Catatan Internal Teknisi{' '}
+                  {adminUser.role === 'CASHIER' && (
+                    <span className="text-[10px] font-normal">(Terkunci untuk Kasir)</span>
+                  )}
                 </label>
                 <input
                   type="text"
-                  value={newSecretNotes}
-                  onChange={(e) => setNewSecretNotes(e.target.value)}
-                  placeholder="Jalur skema motherboard / toko sparepart..."
-                  className="w-full px-3 py-2 text-xs font-mono rounded-lg bg-amber-50/40 dark:bg-[#0B0F19] border border-amber-300 dark:border-amber-800/70 text-slate-900 dark:text-slate-100"
+                  value={adminUser.role === 'CASHIER' ? '' : newSecretNotes}
+                  disabled={adminUser.role === 'CASHIER'}
+                  readOnly={adminUser.role === 'CASHIER'}
+                  onChange={(e) => {
+                    if (adminUser.role !== 'CASHIER') {
+                      setNewSecretNotes(e.target.value);
+                    }
+                  }}
+                  placeholder={
+                    adminUser.role === 'CASHIER'
+                      ? 'Hanya dapat diisi oleh Teknisi / Owner...'
+                      : 'Jalur skema motherboard / toko sparepart...'
+                  }
+                  className="w-full px-3 py-2 text-xs font-mono rounded-lg bg-amber-50/40 dark:bg-[#0B0F19] border border-amber-300 dark:border-amber-800/70 text-slate-900 dark:text-slate-100 disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-slate-200/70 dark:disabled:bg-slate-900"
                 />
               </div>
 
@@ -3151,7 +3200,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* ====================================================================
           SUB-TAB KAS & KEUANGAN (LAPORAN OMZET, MODAL, DAN LABA BERSIH)
          ==================================================================== */}
-      {activeSubTab === 'finance' && (
+      {activeSubTab === 'finance' &&
+        (adminUser.role === 'OWNER' || adminUser.role === 'CASHIER') && (
         <div className="space-y-6">
           {/* 4 Kartu Utama Keuangan */}
           {financialSummary && (
@@ -3305,7 +3355,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* ====================================================================
           SUB-TAB PENGATURAN SISTEM (2 KOLOM UTAMA: SIDEBAR 25% KIRI, MAIN CONTENT 75% KANAN)
          ==================================================================== */}
-      {activeSubTab === 'settings' && (
+      {activeSubTab === 'settings' && adminUser.role === 'OWNER' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* KOLOM KIRI (SIDEBAR 25% / lg:col-span-3): Navigasi Sub-Menu Pengaturan */}
           <aside className="lg:col-span-3 rounded-xl bg-white dark:bg-[#111827]/80 border border-slate-200 dark:border-[#1F2937] p-3.5 shadow-xs space-y-1.5 lg:sticky lg:top-20">
@@ -4405,7 +4455,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       )}
 
       {/* Modal Konfirmasi Hapus Nota Servis Permanen */}
-      {ticketToDelete && (
+      {ticketToDelete && adminUser.role === 'OWNER' && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 backdrop-blur-sm p-4">
           <div className="w-full max-w-md rounded-xl bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 p-6 shadow-2xl space-y-4">
             <div className="flex items-start gap-3">

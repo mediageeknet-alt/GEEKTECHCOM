@@ -257,7 +257,33 @@ async function requireAdminAuth(req: AuthenticatedRequest, res: Response, next: 
     }
   }
 
-  req.adminUser = payload;
+  const state = dbStore.getState();
+  const currentAdmin = state.admins.find((a) => a.id === payload.sub);
+  if (!currentAdmin) {
+    clearAuthCookies(res);
+    return res.status(401).json({
+      error: 'ACCOUNT_NOT_FOUND',
+      message: 'Akun petugas sudah tidak terdaftar. Silakan login kembali.',
+    });
+  }
+
+  req.adminUser = {
+    ...payload,
+    username: currentAdmin.username,
+    role: currentAdmin.role,
+  };
+  return next();
+}
+
+function requireOwnerRole(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  const role = String(req.adminUser?.role || '').toUpperCase();
+  if (role !== 'OWNER' && role !== 'ADMIN') {
+    return res.status(403).json({
+      error: 'FORBIDDEN',
+      message:
+        'Akses ditolak (403 Forbidden). Tindakan ini hanya diizinkan untuk akun OWNER / ADMIN.',
+    });
+  }
   return next();
 }
 
@@ -638,10 +664,11 @@ async function startServer() {
     }
   );
 
-  // Instant Session Revocation (Mematikan sesi Admin dari jarak jauh)
+  // Instant Session Revocation (Mematikan sesi Admin dari jarak jauh - OWNER ONLY)
   app.delete(
     '/api/v1/admin/auth/sessions/:sessionId',
     requireAdminAuth,
+    requireOwnerRole,
     async (req: AuthenticatedRequest, res: Response) => {
       const targetSessionId = String(req.params.sessionId || '');
       await redisGuard.revokeSession(targetSessionId);
@@ -658,8 +685,11 @@ async function startServer() {
   app.get(
     '/api/v1/admin/dashboard',
     requireAdminAuth,
-    async (_req: AuthenticatedRequest, res: Response) => {
+    async (req: AuthenticatedRequest, res: Response) => {
       const state = dbStore.getState();
+      const role = req.adminUser?.role || 'TECHNICIAN';
+      const isOwner = role === 'OWNER';
+      const canViewFinance = role === 'OWNER' || role === 'CASHIER';
 
       const enrichedTickets = state.tickets
         .map((ticket) => {
@@ -703,43 +733,61 @@ async function startServer() {
       );
       const realizedNetProfit = realizedRevenue - realizedModal;
 
-      const activeSessions = await redisGuard.listActiveSessions();
-      const redisTelemetry = redisGuard.getTelemetrySnapshot();
+      const activeSessions = isOwner ? await redisGuard.listActiveSessions() : [];
+      const redisTelemetry = isOwner ? redisGuard.getTelemetrySnapshot() : null;
 
       return res.json({
-        financial_summary: {
-          total_gross_revenue: totalGrossRevenue,
-          total_parts_modal: totalPartsModal,
-          total_net_profit: totalNetProfit,
-          realized_revenue: realizedRevenue,
-          realized_modal: realizedModal,
-          realized_net_profit: realizedNetProfit,
-          total_tickets: state.tickets.length,
-          waiting_approval_count: state.tickets.filter((t) => t.status === 'WAITING_APPROVAL')
-            .length,
-          ready_pickup_count: state.tickets.filter((t) => t.status === 'READY_FOR_PICKUP').length,
-        },
+        financial_summary: canViewFinance
+          ? {
+              total_gross_revenue: totalGrossRevenue,
+              total_parts_modal: totalPartsModal,
+              total_net_profit: totalNetProfit,
+              realized_revenue: realizedRevenue,
+              realized_modal: realizedModal,
+              realized_net_profit: realizedNetProfit,
+              total_tickets: state.tickets.length,
+              waiting_approval_count: state.tickets.filter((t) => t.status === 'WAITING_APPROVAL')
+                .length,
+              ready_pickup_count: state.tickets.filter((t) => t.status === 'READY_FOR_PICKUP')
+                .length,
+            }
+          : null,
         tickets: enrichedTickets,
-        system_settings: state.system_settings,
+        system_settings: isOwner
+          ? state.system_settings
+          : {
+              ...state.system_settings,
+              wablas_api_key: '',
+              wablas_secret_key: '',
+            },
         active_sessions: activeSessions,
         redis_telemetry: redisTelemetry,
-        team_members: state.admins.map((a) => ({
-          id: a.id,
-          username: a.username,
-          full_name: a.full_name || a.username,
-          role: a.role,
-          last_login_ip: a.last_login_ip,
-          created_at: a.created_at,
-        })),
+        team_members: isOwner
+          ? state.admins.map((a) => ({
+              id: a.id,
+              username: a.username,
+              full_name: a.full_name || a.username,
+              role: a.role,
+              last_login_ip: a.last_login_ip,
+              created_at: a.created_at,
+            }))
+          : [],
       });
     }
   );
 
-  // Buat Nota Terima Servis Baru (Auto Enkripsi AES-256 + Auto Trigger WA RECEIVED)
+  // Buat Nota Terima Servis Baru (Hanya OWNER & CASHIER, TECHNICIAN dilarang)
   app.post(
     '/api/v1/admin/tickets',
     requireAdminAuth,
     async (req: AuthenticatedRequest, res: Response) => {
+      if (req.adminUser?.role === 'TECHNICIAN') {
+        return res.status(403).json({
+          error: 'FORBIDDEN',
+          message:
+            'Akses ditolak (403 Forbidden). Akun TECHNICIAN tidak diizinkan membuat antrean servis baru.',
+        });
+      }
       const parsed = CreateTicketSchema.safeParse(req.body);
       if (!parsed.success) {
         return res.status(400).json({
@@ -831,7 +879,8 @@ async function startServer() {
         hardware_specs: data.hardware_specs || data.physical_checklist.hardware_specs || null,
         initial_complaint: finalInitialComplaint,
         public_diagnosis: data.public_diagnosis || null,
-        secret_technician_notes: data.secret_technician_notes || null,
+        secret_technician_notes:
+          req.adminUser?.role === 'CASHIER' ? null : data.secret_technician_notes || null,
         status: targetInitialStatus,
         customer_approved: isDirectApproved,
         estimated_cost: data.estimated_cost,
@@ -992,7 +1041,8 @@ async function startServer() {
       if (data.public_diagnosis !== undefined) {
         ticket.public_diagnosis = data.public_diagnosis;
       }
-      if (data.secret_technician_notes !== undefined) {
+      // Role KASIR (CASHIER) dilarang mengedit Catatan Internal Teknisi (Read-Only)
+      if (data.secret_technician_notes !== undefined && req.adminUser?.role !== 'CASHIER') {
         ticket.secret_technician_notes = data.secret_technician_notes;
       }
       if (data.estimated_cost !== undefined) {
@@ -1167,10 +1217,11 @@ async function startServer() {
     }
   );
 
-  // Hapus Tiket Servis Secara Permanen (`DELETE /api/v1/admin/tickets/:id`)
+  // Hapus Tiket Servis Secara Permanen (`DELETE /api/v1/admin/tickets/:id` & `/api/services/:id` - OWNER/ADMIN ONLY)
   app.delete(
-    '/api/v1/admin/tickets/:id',
+    ['/api/v1/admin/tickets/:id', '/api/services/:id'],
     requireAdminAuth,
+    requireOwnerRole,
     async (req: AuthenticatedRequest, res: Response) => {
       const ticketId = req.params.id;
       const state = dbStore.getState();
@@ -1268,10 +1319,14 @@ async function startServer() {
     });
   });
 
+  // Proteksi seluruh rute /api/settings/* dan /api/v1/admin/settings/* hanya untuk OWNER / ADMIN
+  app.use(['/api/v1/admin/settings', '/api/settings'], requireAdminAuth, requireOwnerRole);
+
   // Update Profil Usaha (`PUT /api/v1/admin/settings/profile`)
   app.put(
     '/api/v1/admin/settings/profile',
     requireAdminAuth,
+    requireOwnerRole,
     async (req: AuthenticatedRequest, res: Response) => {
       const parsed = UpdateStoreProfileSchema.safeParse(req.body);
       if (!parsed.success) {
@@ -1305,6 +1360,7 @@ async function startServer() {
   app.put(
     '/api/v1/admin/settings/wablas',
     requireAdminAuth,
+    requireOwnerRole,
     async (req: AuthenticatedRequest, res: Response) => {
       const parsed = UpdateWablasSchema.safeParse(req.body);
       if (!parsed.success) {
@@ -1337,11 +1393,12 @@ async function startServer() {
   // MANAJEMEN TIM (KELOLA ADMIN, TEKNISI & KASIR - ROLE OWNER ONLY)
   // ==========================================================================
 
-  // 1. Ambil daftar akun tim
+  // 1. Ambil daftar akun tim (Owner Only)
   app.get(
     '/api/v1/admin/team',
     requireAdminAuth,
-    async (req: AuthenticatedRequest, res: Response) => {
+    requireOwnerRole,
+    async (_req: AuthenticatedRequest, res: Response) => {
       const state = dbStore.getState();
       const users = state.admins.map((a) => ({
         id: a.id,
@@ -1359,6 +1416,7 @@ async function startServer() {
   app.post(
     '/api/v1/admin/team',
     requireAdminAuth,
+    requireOwnerRole,
     async (req: AuthenticatedRequest, res: Response) => {
       if (req.adminUser?.role !== 'OWNER') {
         return res.status(403).json({
@@ -1598,12 +1656,13 @@ async function startServer() {
   );
 
   // ==========================================================================
-  // BACKUP & RESTORE DATABASE (EXPORT / IMPORT SELURUH TABEL JSON)
+  // BACKUP & RESTORE DATABASE (EXPORT / IMPORT SELURUH TABEL JSON - OWNER ONLY)
   // ==========================================================================
 
   app.get(
     '/api/v1/admin/database/backup',
     requireAdminAuth,
+    requireOwnerRole,
     async (_req: AuthenticatedRequest, res: Response) => {
       const state = dbStore.getState();
       const backupPayload = {
@@ -1633,6 +1692,7 @@ async function startServer() {
   app.post(
     '/api/v1/admin/database/restore',
     requireAdminAuth,
+    requireOwnerRole,
     async (req: AuthenticatedRequest, res: Response) => {
       const body = req.body;
       const source = body?.tables && typeof body.tables === 'object' ? body.tables : body;
