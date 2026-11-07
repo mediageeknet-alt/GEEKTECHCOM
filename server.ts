@@ -776,18 +776,11 @@ async function startServer() {
     }
   );
 
-  // Buat Nota Terima Servis Baru (Hanya OWNER & CASHIER, TECHNICIAN dilarang)
+  // Buat Nota Terima Servis Baru (Diizinkan untuk OWNER, TECHNICIAN, dan CASHIER)
   app.post(
     '/api/v1/admin/tickets',
     requireAdminAuth,
     async (req: AuthenticatedRequest, res: Response) => {
-      if (req.adminUser?.role === 'TECHNICIAN') {
-        return res.status(403).json({
-          error: 'FORBIDDEN',
-          message:
-            'Akses ditolak (403 Forbidden). Akun TECHNICIAN tidak diizinkan membuat antrean servis baru.',
-        });
-      }
       const parsed = CreateTicketSchema.safeParse(req.body);
       if (!parsed.success) {
         return res.status(400).json({

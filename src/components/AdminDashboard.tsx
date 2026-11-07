@@ -379,7 +379,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       if (adminUser.role === 'OWNER') {
         fetchTeamMembers();
       }
-      if (adminUser.role === 'TECHNICIAN' && activeSubTab !== 'tickets') {
+      if (
+        adminUser.role === 'TECHNICIAN' &&
+        (activeSubTab === 'finance' || activeSubTab === 'settings')
+      ) {
         setActiveSubTab('tickets');
       } else if (adminUser.role === 'CASHIER' && activeSubTab === 'settings') {
         setActiveSubTab('tickets');
@@ -1495,20 +1498,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               Antrean Servis ({tickets.length})
             </button>
 
-            {(adminUser.role === 'OWNER' || adminUser.role === 'CASHIER') && (
-              <button
-                type="button"
-                onClick={() => setActiveSubTab('new_ticket')}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm md:text-base font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                  activeSubTab === 'new_ticket'
-                    ? 'bg-white dark:bg-[#111827] text-[#0284C7] dark:text-[#00F0FF] shadow-xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                }`}
-              >
-                <Plus className="w-4 h-4 shrink-0" />
-                <span>Input Servisan</span>
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => setActiveSubTab('new_ticket')}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm md:text-base font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                activeSubTab === 'new_ticket'
+                  ? 'bg-white dark:bg-[#111827] text-[#0284C7] dark:text-[#00F0FF] shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Plus className="w-4 h-4 shrink-0" />
+              <span>Input Servisan</span>
+            </button>
 
             {(adminUser.role === 'OWNER' || adminUser.role === 'CASHIER') && (
               <button
@@ -2481,8 +2482,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* ====================================================================
           SUB-TAB 2: FORM INPUT SERVISAN BARU
          ==================================================================== */}
-      {activeSubTab === 'new_ticket' &&
-        (adminUser.role === 'OWNER' || adminUser.role === 'CASHIER') && (
+      {activeSubTab === 'new_ticket' && (
         <form
           onSubmit={handleCreateTicket}
           className="rounded-xl bg-white dark:bg-[#111827]/80 border border-slate-200 dark:border-[#1F2937] p-6 sm:p-8 space-y-6"
