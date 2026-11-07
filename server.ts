@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import http from 'http';
@@ -1834,7 +1835,32 @@ async function startServer() {
 
   const httpServer = http.createServer(app);
 
-  if (process.env.NODE_ENV !== 'production') {
+  const distPath = path.resolve(process.cwd(), 'dist');
+  const distIndexHtml = path.join(distPath, 'index.html');
+  const isProduction =
+    process.env.NODE_ENV === 'production' ||
+    (process.env.NODE_ENV !== 'development' &&
+      process.env.DISABLE_HMR !== 'true' &&
+      fs.existsSync(distIndexHtml));
+
+  if (isProduction && fs.existsSync(distIndexHtml)) {
+    // MODE PRODUCTION: Sajikan file statis yang sudah di-minify dari folder dist/
+    app.use(
+      express.static(distPath, {
+        maxAge: '7d',
+        index: false,
+      })
+    );
+
+    // Catch-all route untuk React SPA agar refresh halaman tidak menghasilkan 404
+    app.get('*', (req: Request, res: Response, next: NextFunction) => {
+      if (req.path.startsWith('/api/')) {
+        return next();
+      }
+      return res.sendFile(distIndexHtml);
+    });
+  } else {
+    // MODE DEVELOPMENT: Gunakan Vite Middleware
     const vite = await createViteServer({
       server: {
         middlewareMode: true,
@@ -1844,12 +1870,6 @@ async function startServer() {
       appType: 'spa',
     });
     app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (_req: Request, res: Response) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
   }
 
   httpServer.on('error', (err: NodeJS.ErrnoException) => {
@@ -1861,8 +1881,11 @@ async function startServer() {
     }
   });
 
-  httpServer.listen(PORT, '0.0.0.0', () => {
-    console.log(`Geektech-Com Full-Stack Server running on http://0.0.0.0:${PORT}`);
+  const activePort = Number(process.env.PORT) || PORT;
+  httpServer.listen(activePort, '0.0.0.0', () => {
+    console.log(
+      `Geektech-Com Full-Stack Server [${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'}] running on http://0.0.0.0:${activePort}`
+    );
   });
 }
 
